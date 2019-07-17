@@ -9,24 +9,26 @@ var con = mysql.createConnection({
   host: "localhost",
   user: "root",
   password: "1111",
-  database: "chatapp"
+  // database: "chatapp"
 });
-//set the template engine ejs
-app.set('view engine', 'ejs');
+
+// //set the template engine ejs
+// app.set('view engine', 'ejs');
+
 
 //middlewares
-app.use(express.static('public'));
-
+ app.use(express.static('public'));
 
 //routes
 app.get('/', (req, res) => {
 	res.sendFile(path.join(__dirname+'/views/index.html'));
 });
 
-app.post('/submit',function(req,res){
-var msg = req.body.send_message;
 
-console.log("msg")
+app.post('/submit',function(req,res){
+var msg = req.body.message;
+console.log(msg)
+
   con.connect(function(err) {
   if (err) throw err;
   var sql = "INSERT INTO msgdata (message) VALUES ('"+msg+"')";
@@ -39,38 +41,43 @@ console.log("msg")
 });
 
 //Listen on port 3000
-server = app.listen(3000)
-console.log("running on port:3000");
+server = app.listen(3000);
+console.log("server is running on port", server.address().port);
 
 //socket.io instantiation
-const io = require("socket.io")(server)
-
+const io = require("socket.io")(server);
 
 //listen on every connection
 io.on('connection', (socket) => {
-console.log('New user connected')
-
+//console.log('New user connected')
+   //  console.log(socket.id);
 //default username
+var sockets = [];
+  sockets.push(socket.id)
+  console.log("1st socket:" +sockets[0])
+  console.log("2nd socket:"+sockets[1])
+
 	socket.username = " "
-  var sockets = [];
     //listen on change_username
     socket.on('change_username', (data) => {
         socket.username = data.username
-          console.log(data.username+' has connected to the server')
-          sockets.push(socket.id)
-          console.log(sockets[0])
+          console.log(data.username+' has connected to the server')        
     });
 
     //listen on new_message
     socket.on('new_message', (data) => {
         //broadcast the new message
-        io.sockets.emit('new_message', {message : data.message, username : socket.username});
-	io.to(sockets[0]).emit("new_message",{message : data.message, username : socket.username})
-    })
+      //  io.sockets.emit('new_message', {message : data.message, username : socket.username});
+      // io.emit('new_message', {message : data.message, username : socket.username});
+    //  io.sockets.connected[socket.id].emit("new_message",{message : data.message, username : socket.username});
+      io.to(sockets[0]).emit("new_message",{message : data.message, username : socket.username})
+    });
 
-    //listen on typing
-    socket.on('typing', (data) => {
-    	socket.broadcast.emit('typing', {username : socket.username})
- });
+     socket.on('disconnect', function(){
+        // remove the username from global usernames list
+        delete username;
 
+        // echo globally that this client has left
+       console.log(socket.username + ' has disconnected');
+    });
 });
