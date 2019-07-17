@@ -54,8 +54,10 @@ io.on('connection', (socket) => {
 //default username
 var sockets = [];
   sockets.push(socket.id)
-  console.log("1st socket:" +sockets[0])
-  console.log("2nd socket:"+sockets[1])
+  console.log(sockets[0])
+  console.log(sockets[1])
+  console.log(sockets[2])
+
 
 	socket.username = " "
     //listen on change_username
