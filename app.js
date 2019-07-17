@@ -51,12 +51,15 @@ io.on('connection', (socket) => {
 console.log('New user connected')
 
 //default username
-	socket.username = "user"
-
+	socket.username = " "
+  var sockets = [];
     //listen on change_username
     socket.on('change_username', (data) => {
         socket.username = data.username
-    })
+          console.log(data.username+' has connected to the server')
+          sockets.push(socket.id)
+          console.log(sockets[0])
+    });
 
     //listen on new_message
     socket.on('new_message', (data) => {
