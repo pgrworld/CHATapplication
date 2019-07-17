@@ -65,6 +65,7 @@ console.log('New user connected')
     socket.on('new_message', (data) => {
         //broadcast the new message
         io.sockets.emit('new_message', {message : data.message, username : socket.username});
+	io.to(sockets[0]).emit("new_message",{message : data.message, username : socket.username})
     })
 
     //listen on typing
