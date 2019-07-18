@@ -46,13 +46,14 @@ console.log("server is running on port", server.address().port);
 
 //socket.io instantiation
 const io = require("socket.io")(server);
+var sockets = [];
 
 //listen on every connection
 io.on('connection', (socket) => {
 //console.log('New user connected')
    //  console.log(socket.id);
 //default username
-var sockets = [];
+	
   sockets.push(socket.id)
   console.log(sockets[0])
   console.log(sockets[1])
@@ -72,7 +73,7 @@ var sockets = [];
       //  io.sockets.emit('new_message', {message : data.message, username : socket.username});
       // io.emit('new_message', {message : data.message, username : socket.username});
     //  io.sockets.connected[socket.id].emit("new_message",{message : data.message, username : socket.username});
-      io.to(sockets[0]).emit("new_message",{message : data.message, username : socket.username})
+      io.to(sockets[2]).emit("new_message",{message : data.message, username : socket.username})
     });
 
      socket.on('disconnect', function(){
